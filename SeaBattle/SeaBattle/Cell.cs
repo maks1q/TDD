@@ -18,6 +18,7 @@ namespace SeaBattle
         private int y;
         private int state;
         private bool mark;
+        private Ship ship;
 
         public Cell(int x, int y)
         {

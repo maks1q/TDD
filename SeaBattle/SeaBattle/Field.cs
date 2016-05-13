@@ -16,7 +16,7 @@ namespace SeaBattle
         private int countTwoShips = 3;
         private int countThreeShips = 2;
         private int countFourShips = 1;
-        private int numLiveShips = 0;
+        private int countLiveShips = 0;
         
         public Field()
         {    
@@ -32,6 +32,11 @@ namespace SeaBattle
                 }
         }
 
+        public Cell[][] getFieldCells()
+        {
+            return cells;
+        }
+
         public int getHeight()
         {
             return this.height;
@@ -42,10 +47,30 @@ namespace SeaBattle
             return this.width;
         }
 
-        public void setShip(int size, int x, int y, int dx, int dy)
+        public bool setShip(int size, int x, int y, int dx, int dy)
         {
+            for(int i = 0; i < size; i++)
+            {
+                if (y == dy)
+                {
+                    if(cells[y][x + i].getState() == Cell.CELL_WELL || cells[y][x + i].getState() == Cell.CELL_BORDER)
+                        return false;
+                }
+                else if (x == dx)
+                {
+                    if(cells[y + i][x].getState() == Cell.CELL_WELL || cells[y + i][x].getState() == Cell.CELL_BORDER)
+                        return false;
+                }
+            }
             Ship ship = new Ship(this, size, x, y, dx, dy);
             ships.Add(ship);
+            countLiveShips++;
+            return true;
+        }
+
+        public int getCountLiveShips()
+        {
+            return this.countLiveShips;
         }
 
         public Cell getCell(int x, int y)

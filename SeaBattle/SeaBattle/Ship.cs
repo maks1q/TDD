@@ -24,6 +24,7 @@ namespace SeaBattle
         {
             this.field = field;
             this.size = size;
+            this.state = SHIP_WELL;
             this.x = x;
             this.y = y;
             this.dx = dx;
