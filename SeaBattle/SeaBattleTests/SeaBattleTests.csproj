@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="CellTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShipTests.cs" />
+    <Compile Include="FieldTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SeaBattle\SeaBattle.csproj">
