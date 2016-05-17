@@ -66,6 +66,10 @@ namespace SeaBattle
                     if(cells[y + i][x].getState() == Cell.CELL_WELL || cells[y + i][x].getState() == Cell.CELL_BORDER)
                         return false;
                 }
+                else
+                {
+                    return false;
+                }
             }
             Ship ship = new Ship(this, size, x, y, dx, dy);
             ships.Add(ship);
@@ -113,10 +117,10 @@ namespace SeaBattle
         {
             switch (ship)
             {
-                case 1: return countOneShips; break;
-                case 2: return countTwoShips; break;
-                case 3: return countThreeShips; break;
-                case 4: return countFourShips; break;
+                case 1: return countOneShips;
+                case 2: return countTwoShips;
+                case 3: return countThreeShips;
+                case 4: return countFourShips;
                 default: return 0;
             }
         }
