@@ -75,5 +75,36 @@ namespace SeaBattleTests
             field.setShip(1, 2, 0, 2, 0);
             Assert.AreEqual(3, field.getCountLiveShips());
         }
+
+        [TestMethod]
+        public void TestFieldDoShot()
+        {
+            Field field = new Field();
+            field.setShip(4, 4, 5, 7, 5);
+            Assert.AreEqual(Field.SHOT_INJURED, field.doShot(5, 5));
+        }
+
+        [TestMethod]
+        public void TestFieldDoShot1()
+        {
+            Field field = new Field();
+            field.setShip(1, 0, 0, 0, 0);
+            field.setShip(4, 4, 5, 7, 5);
+            field.doShot(4, 5);
+            field.doShot(5, 5);
+            field.doShot(6, 5);
+            Assert.AreEqual(Field.SHOT_KILLED, field.doShot(7, 5));
+        }
+
+        [TestMethod]
+        public void TestFieldDoShot2()
+        {
+            Field field = new Field();
+            field.setShip(4, 4, 5, 7, 5);
+            field.doShot(4, 5);
+            field.doShot(5, 5);
+            field.doShot(6, 5);
+            Assert.AreEqual(Field.SHOT_WIN, field.doShot(7, 5));
+        }
     }
 }

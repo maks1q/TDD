@@ -28,6 +28,16 @@ namespace SeaBattle
             this.mark = false;
         }
 
+        public void setShip(Ship ship)
+        {
+            this.ship = ship;
+        }
+
+        public Ship getShip()
+        {
+            return this.ship;
+        }
+
         public int getX()
         {
             return this.x;
@@ -56,6 +66,24 @@ namespace SeaBattle
         public void setMark(bool mark)
         {
             this.mark = mark;
+        }
+
+        public int doShot()
+        {
+            setMark(true);
+            if (state == CELL_WELL)
+            {
+                setState(CELL_INJURED);
+                return ship.doShot();
+            }
+            else
+            {
+                if ((state == CELL_BORDER) || (state == CELL_WATER))
+                {
+                    setState(CELL_MISSED);
+                }
+            }
+            return Field.SHOT_MISSED;
         }
     }
 }

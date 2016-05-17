@@ -7,6 +7,11 @@ namespace SeaBattle
 {
     public class Field
     {
+        public const int SHOT_MISSED = 1; 
+	    public const int SHOT_INJURED = 2; 
+	    public const int SHOT_KILLED = 3; 
+	    public const int SHOT_WIN = 4;
+
         private Cell[][] cells;
         private List<Ship> ships = new List<Ship>();
         private int width = 10;
@@ -73,9 +78,22 @@ namespace SeaBattle
             return this.countLiveShips;
         }
 
+        public void setCountLiveShips(int count)
+        {
+            this.countLiveShips = count;
+        }
+
         public Cell getCell(int x, int y)
         {
             return cells[y][x];
+        }
+
+        public int doShot(int x, int y)
+        {
+            int shot = getCell(x, y).doShot();
+            if (countLiveShips == 0)
+                return SHOT_WIN;
+            return shot;
         }
 
         //задать количество кораблей одного из типов

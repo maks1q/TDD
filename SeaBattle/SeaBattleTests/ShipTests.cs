@@ -79,5 +79,74 @@ namespace SeaBattleTests
             List<Cell> cells = ship.getBorderCells();
             Assert.AreEqual(5, cells.Count);
         }
+
+        [TestMethod]
+        public void TestShipDoShot()
+        {
+            Field field = new Field();
+            field.setShip(2, 0, 0, 1, 0);
+            field.getCell(0, 0).doShot();
+            field.getCell(1, 0).doShot();
+            Assert.AreEqual(0, field.getCell(0, 0).getShip().getHealth());
+        }
+
+        [TestMethod]
+        public void TestShipDoShot1()
+        {
+            Field field = new Field();
+            field.setShip(2, 0, 0, 1, 0);
+            field.getCell(0, 0).doShot();
+            field.getCell(1, 0).doShot();
+            Assert.AreEqual(Ship.SHIP_KILLED, field.getCell(0, 0).getShip().getState());
+        }
+
+        [TestMethod]
+        public void TestShipDoShot2()
+        {
+            Field field = new Field();
+            field.setShip(2, 0, 0, 1, 0);
+            field.getCell(0, 0).doShot();
+            Assert.AreEqual(Ship.SHIP_INJURED, field.getCell(0, 0).getShip().getState());
+        }
+
+        [TestMethod]
+        public void TestShipDoShot3()
+        {
+            Field field = new Field();
+            Ship ship = new Ship(field, 3, 4, 5, 6, 5);
+            ship.doShot();
+            ship.doShot();
+            ship.doShot();
+            Assert.AreEqual(Ship.SHIP_KILLED, ship.getState());
+        }
+
+        [TestMethod]
+        public void TestShipDoShot4()
+        {
+            Field field = new Field();
+            Ship ship = new Ship(field, 3, 4, 5, 6, 5);
+            ship.doShot();
+            ship.doShot();
+            Assert.AreEqual(Ship.SHIP_INJURED, ship.getState());
+        }
+
+        [TestMethod]
+        public void TestShipDoShot5()
+        {
+            Field field = new Field();
+            Ship ship = new Ship(field, 3, 4, 5, 6, 5);
+            ship.doShot();
+            ship.doShot();
+            Assert.AreEqual(Field.SHOT_KILLED, ship.doShot());
+        }
+
+        [TestMethod]
+        public void TestShipDoShot6()
+        {
+            Field field = new Field();
+            Ship ship = new Ship(field, 3, 4, 5, 6, 5);
+            ship.doShot();
+            Assert.AreEqual(Field.SHOT_INJURED, ship.doShot());
+        }
     }
 }

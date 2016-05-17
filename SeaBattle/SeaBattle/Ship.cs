@@ -15,6 +15,7 @@ namespace SeaBattle
         private int x, y;
         private int dx, dy;
         private int size;
+        private int health;
         private int state;
         private Field field;
         private List<Cell> listCells = new List<Cell>();
@@ -24,6 +25,7 @@ namespace SeaBattle
         {
             this.field = field;
             this.size = size;
+            this.health = size;
             this.state = SHIP_WELL;
             this.x = x;
             this.y = y;
@@ -37,12 +39,14 @@ namespace SeaBattle
                     cell = field.getCell(x + i, y); //new Cell(x + i, y);
                     cell.setState(Cell.CELL_WELL);
                     listCells.Add(cell);
+                    cell.setShip(this);
                 }
                 else if (x == dx)
                 {
                     cell = field.getCell(x, y + i); //new Cell(x, y + i);
                     cell.setState(Cell.CELL_WELL);
                     listCells.Add(cell);
+                    cell.setShip(this);
                 }
             }
             for(int i = 0; i < size; i++)
@@ -123,6 +127,44 @@ namespace SeaBattle
                     }
                 }
             }
+        }
+
+        public int doShot() 
+        {
+		    if (health != 0) 
+            {
+			    health--;
+			    if (health == 0) 
+                {
+				    field.setCountLiveShips(field.getCountLiveShips() - 1);
+				    state = Ship.SHIP_KILLED;
+                    for(int i = 0; i < listCells.Count; i++)
+                    {
+                        listCells[i].setState(Cell.CELL_KILLED);
+                    }
+                    for(int i = 0; i < listBorders.Count; i++)
+                    {
+                        listBorders[i].setState(Cell.CELL_MISSED);
+                        listBorders[i].setMark(true);
+                    }
+				    return Field.SHOT_KILLED;
+			    } 
+                else 
+                {
+				    state = SHIP_INJURED;
+			    }
+		    }
+		    return Field.SHOT_INJURED;
+	    }
+
+        public int getHealth()
+        {
+            return this.health;
+        }
+
+        public int getState()
+        {
+            return this.state;
         }
 
         public List<Cell> getBorderCells()
