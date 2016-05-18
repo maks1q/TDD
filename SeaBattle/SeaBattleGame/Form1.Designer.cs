@@ -121,7 +121,6 @@
             this.dataGridViewPlayer.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewPlayer.Size = new System.Drawing.Size(357, 243);
             this.dataGridViewPlayer.TabIndex = 0;
-            this.dataGridViewPlayer.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewPlayer_CellMouseUp);
             // 
             // Column1
             // 
@@ -540,6 +539,7 @@
             this.dataGridViewOpponent.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewOpponent.Size = new System.Drawing.Size(357, 243);
             this.dataGridViewOpponent.TabIndex = 0;
+            this.dataGridViewOpponent.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewOpponent_CellMouseUp);
             // 
             // dataGridViewTextBoxColumn1
             // 

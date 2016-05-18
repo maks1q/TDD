@@ -57,39 +57,117 @@ namespace SeaBattleGame
                 labelTwoCount.Text = countTwoShips.ToString();
                 labelThreeCount.Text = countThreeShips.ToString();
                 labelFourCount.Text = countFourShips.ToString();
-
-                panelSetShips.Visible = true;
+                dataGridViewPlayer.Enabled = true;
+                dataGridViewOpponent.Enabled = true;
+                //panelSetShips.Visible = true;
                 //currentField.setShip(2, 1, 1, 2, 1);
                 //currentField.setShip(2, 5, 1, 6, 1);
-                drawField(playerOneField);
+                //ставим корабли 1 игрока
+                playerOneField.setShip(1, 0, 0, 0, 0);
+                playerOneField.setShip(1, 2, 0, 2, 0);
+                playerOneField.setShip(1, 4, 0, 4, 0);
+                playerOneField.setShip(1, 6, 0, 6, 0);
+                playerOneField.setShip(2, 2, 2, 3, 2);
+                playerOneField.setShip(2, 5, 2, 6, 2);
+                playerOneField.setShip(2, 8, 2, 9, 2);
+                playerOneField.setShip(3, 0, 5, 2, 5);
+                playerOneField.setShip(3, 4, 5, 6, 5);
+                playerOneField.setShip(4, 0, 7, 3, 7);
+                //ставим корабли 2 игрока
+                playerTwoField.setShip(1, 0, 0, 0, 0);
+                playerTwoField.setShip(1, 0, 2, 0, 2);
+                playerTwoField.setShip(1, 0, 4, 0, 4);
+                playerTwoField.setShip(1, 0, 6, 0, 6);
+                playerTwoField.setShip(2, 0, 8, 0, 9);
+                playerTwoField.setShip(2, 2, 0, 2, 1);
+                playerTwoField.setShip(2, 2, 3, 2, 4);
+                playerTwoField.setShip(3, 2, 6, 2, 8);
+                playerTwoField.setShip(3, 4, 0, 4, 2);
+                playerTwoField.setShip(4, 4, 4, 4, 7);
+
+                drawPlayerField(playerOneField);
             }
         }
 
-        private void dataGridViewPlayer_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridViewOpponent_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
-            int rowIndex = dataGridViewPlayer.CurrentCell.RowIndex;
-            int columnIndex = dataGridViewPlayer.CurrentCell.ColumnIndex;
-            int resultShot = playerOneField.doShot(columnIndex, rowIndex) ;
-            if (resultShot == Field.SHOT_INJURED)
+            int rowIndex = dataGridViewOpponent.CurrentCell.RowIndex;
+            int columnIndex = dataGridViewOpponent.CurrentCell.ColumnIndex;
+            int resultShot = 1;
+            int statusCell = 1;
+            if (game.getCurrentPlayer() == Game.PLAYER_ONE)
+                statusCell = playerTwoField.getCell(columnIndex, rowIndex).getState();
+            else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+                statusCell = playerOneField.getCell(columnIndex, rowIndex).getState();
+            if (statusCell == Cell.CELL_BORDER || statusCell == Cell.CELL_WATER || statusCell == Cell.CELL_WELL)
             {
-                dataGridViewPlayer.Rows[rowIndex].Cells[columnIndex].Style.BackColor = Color.Red;
+                if (game.getCurrentPlayer() == Game.PLAYER_ONE)
+                    resultShot = playerTwoField.doShot(columnIndex, rowIndex);
+                else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+                    resultShot = playerOneField.doShot(columnIndex, rowIndex);
+                if (resultShot == Field.SHOT_INJURED)
+                {
+                    //dataGridViewOpponent.Rows[rowIndex].Cells[columnIndex].Style.BackColor = Color.Red;
+                    if (game.getCurrentPlayer() == Game.PLAYER_ONE)
+                        drawOpponentField(playerTwoField);
+                    else
+                        drawOpponentField(playerOneField);
+                }
+                else if (resultShot == Field.SHOT_MISSED)
+                {
+                    dataGridViewOpponent.Rows[rowIndex].Cells[columnIndex].Style.BackColor = Color.Gray;
+                    if (game.getCurrentPlayer() == Game.PLAYER_ONE)
+                    {
+                        game.setCurrentPlayer(Game.PLAYER_TWO);
+                        drawPlayerField(playerTwoField);
+                        drawOpponentField(playerOneField);
+                    }
+                    else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+                    {
+                        game.setCurrentPlayer(Game.PLAYER_ONE);
+                        drawPlayerField(playerOneField);
+                        drawOpponentField(playerTwoField);
+                    }
+                }
+                else if (resultShot == Field.SHOT_KILLED)
+                {
+                    if (game.getCurrentPlayer() == Game.PLAYER_ONE)
+                        drawOpponentField(playerTwoField);
+                    else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+                        drawOpponentField(playerOneField);
+                }
+                else if (resultShot == Field.SHOT_WIN)
+                {
+                    if (game.getCurrentPlayer() == Game.PLAYER_ONE)
+                        drawOpponentField(playerTwoField);
+                    else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+                        drawOpponentField(playerOneField);
+
+                    MessageBox.Show("Игрок " + game.getCurrentPlayer().ToString() + " победил", "Конец");
+                    clearTables();
+                    dataGridViewPlayer.Enabled = false;
+                    dataGridViewOpponent.Enabled = false;
+                }
             }
-            else if(resultShot == Field.SHOT_MISSED)
+            else
             {
-                dataGridViewPlayer.Rows[rowIndex].Cells[columnIndex].Style.BackColor = Color.Gray;
-            }
-            else if(resultShot == Field.SHOT_KILLED)
-            {
-                drawField(playerOneField);
-            }
-            else if(resultShot == Field.SHOT_WIN)
-            {
-                drawField(playerOneField);
-                MessageBox.Show("Игрок " + game.getCurrentPlayer().ToString() + " победил", "Конец");
+                MessageBox.Show("Вы стреляли сюда уже!", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
-        public void drawField(Field field)
+        public void clearTables()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    dataGridViewPlayer.Rows[i].Cells[j].Style.BackColor = Color.White;
+                    dataGridViewOpponent.Rows[i].Cells[j].Style.BackColor = Color.White;
+                }
+            }
+        }
+
+        public void drawPlayerField(Field field)
         {
             Cell[][] cells = new Cell[10][];
             for (int i = 0; i < 10; i++)
@@ -117,6 +195,46 @@ namespace SeaBattleGame
                     {
                         dataGridViewPlayer.Rows[i].Cells[j].Style.BackColor = Color.Gray;
                     }
+                    else if(cells[i][j].getState() == Cell.CELL_WATER || cells[i][j].getState() == Cell.CELL_BORDER)
+                    {
+                        dataGridViewPlayer.Rows[i].Cells[j].Style.BackColor = Color.White;
+                    }
+                }
+            }
+        }
+
+        public void drawOpponentField(Field field)
+        {
+            Cell[][] cells = new Cell[10][];
+            for (int i = 0; i < 10; i++)
+            {
+                cells[i] = new Cell[10];
+            }
+            cells = field.getFieldCells();
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if (cells[i][j].getState() == Cell.CELL_WELL)
+                    {
+                        dataGridViewOpponent.Rows[i].Cells[j].Style.BackColor = Color.White;
+                    }
+                    else if (cells[i][j].getState() == Cell.CELL_INJURED)
+                    {
+                        dataGridViewOpponent.Rows[i].Cells[j].Style.BackColor = Color.Red;
+                    }
+                    else if (cells[i][j].getState() == Cell.CELL_KILLED)
+                    {
+                        dataGridViewOpponent.Rows[i].Cells[j].Style.BackColor = Color.Black;
+                    }
+                    else if (cells[i][j].getState() == Cell.CELL_MISSED)
+                    {
+                        dataGridViewOpponent.Rows[i].Cells[j].Style.BackColor = Color.Gray;
+                    }
+                    else if (cells[i][j].getState() == Cell.CELL_WATER || cells[i][j].getState() == Cell.CELL_BORDER)
+                    {
+                        dataGridViewOpponent.Rows[i].Cells[j].Style.BackColor = Color.White;
+                    }
                 }
             }
         }
@@ -125,16 +243,16 @@ namespace SeaBattleGame
         {
             switch(letter)
             {
-                case "А": return 0;
-                case "Б": return 1;
-                case "В": return 2;
-                case "Г": return 3;
-                case "Д": return 4;
-                case "Е": return 5;
-                case "Ж": return 6;
-                case "З": return 7;
-                case "И": return 8;
-                case "К": return 9;
+                case "А": case "а": return 0;
+                case "Б": case "б": return 1;
+                case "В": case "в": return 2;
+                case "Г": case "г": return 3;
+                case "Д": case "д": return 4;
+                case "Е": case "е": return 5;
+                case "Ж": case "ж": return 6;
+                case "З": case "з": return 7;
+                case "И": case "и": return 8;
+                case "К": case "к": return 9;
                 default: return 0;
             }
         }
@@ -155,7 +273,29 @@ namespace SeaBattleGame
                     countAllShips--;
                     if (countAllShips == 0)
                         buttonNext.Enabled = true;
-                    drawField(playerOneField);
+                    drawPlayerField(playerOneField);
+                    labelOneCount.Text = countOneShips.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Нельзя так ставить корабли", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+            else if(game.getCurrentPlayer() == Game.PLAYER_TWO)
+            {
+                int x = Convert.ToInt32(textBoxOneNum.Text) - 1;
+                int y = getNumber(textBoxOneLetter.Text);
+                int dx = Convert.ToInt32(textBoxOneNum2.Text) - 1;
+                int dy = getNumber(textBoxOneLetter2.Text);
+                if (playerTwoField.setShip(1, x, y, dx, dy))
+                {
+                    countOneShips--;
+                    if (countOneShips == 0)
+                        buttonOne.Enabled = false;
+                    countAllShips--;
+                    if (countAllShips == 0)
+                        buttonNext.Enabled = true;
+                    drawPlayerField(playerTwoField);
                     labelOneCount.Text = countOneShips.ToString();
                 }
                 else
@@ -181,7 +321,29 @@ namespace SeaBattleGame
                     countAllShips--;
                     if (countAllShips == 0)
                         buttonNext.Enabled = true;
-                    drawField(playerOneField);
+                    drawPlayerField(playerOneField);
+                    labelTwoCount.Text = countTwoShips.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Нельзя так ставить корабли", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+            else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+            {
+                int x = Convert.ToInt32(textBoxTwoNum.Text) - 1;
+                int y = getNumber(textBoxTwoLetter.Text);
+                int dx = Convert.ToInt32(textBoxTwoNum2.Text) - 1;
+                int dy = getNumber(textBoxTwoLetter2.Text);
+                if (playerTwoField.setShip(2, x, y, dx, dy))
+                {
+                    countTwoShips--;
+                    if (countTwoShips == 0)
+                        buttonTwo.Enabled = false;
+                    countAllShips--;
+                    if (countAllShips == 0)
+                        buttonNext.Enabled = true;
+                    drawPlayerField(playerTwoField);
                     labelTwoCount.Text = countTwoShips.ToString();
                 }
                 else
@@ -193,7 +355,6 @@ namespace SeaBattleGame
 
         private void buttonThree_Click(object sender, EventArgs e)
         {
-
             if (game.getCurrentPlayer() == Game.PLAYER_ONE)
             {
                 int x = Convert.ToInt32(textBoxThreeNum.Text) - 1;
@@ -208,7 +369,29 @@ namespace SeaBattleGame
                     countAllShips--;
                     if (countAllShips == 0)
                         buttonNext.Enabled = true;
-                    drawField(playerOneField);
+                    drawPlayerField(playerOneField);
+                    labelThreeCount.Text = countThreeShips.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Нельзя так ставить корабли", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+            else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+            {
+                int x = Convert.ToInt32(textBoxThreeNum.Text) - 1;
+                int y = getNumber(textBoxThreeLetter.Text);
+                int dx = Convert.ToInt32(textBoxThreeNum2.Text) - 1;
+                int dy = getNumber(textBoxThreeLetter2.Text);
+                if (playerTwoField.setShip(3, x, y, dx, dy))
+                {
+                    countThreeShips--;
+                    if (countThreeShips == 0)
+                        buttonThree.Enabled = false;
+                    countAllShips--;
+                    if (countAllShips == 0)
+                        buttonNext.Enabled = true;
+                    drawPlayerField(playerTwoField);
                     labelThreeCount.Text = countThreeShips.ToString();
                 }
                 else
@@ -234,7 +417,29 @@ namespace SeaBattleGame
                     countAllShips--;
                     if (countAllShips == 0)
                         buttonNext.Enabled = true;
-                    drawField(playerOneField);
+                    drawPlayerField(playerOneField);
+                    labelFourCount.Text = countFourShips.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Нельзя так ставить корабли", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+            else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
+            {
+                int x = Convert.ToInt32(textBoxFourNum.Text) - 1;
+                int y = getNumber(textBoxFourLetter.Text);
+                int dx = Convert.ToInt32(textBoxFourNum2.Text) - 1;
+                int dy = getNumber(textBoxFourLetter2.Text);
+                if (playerTwoField.setShip(4, x, y, dx, dy))
+                {
+                    countFourShips--;
+                    if (countFourShips == 0)
+                        buttonFour.Enabled = false;
+                    countAllShips--;
+                    if (countAllShips == 0)
+                        buttonNext.Enabled = true;
+                    drawPlayerField(playerTwoField);
                     labelFourCount.Text = countFourShips.ToString();
                 }
                 else
@@ -246,7 +451,10 @@ namespace SeaBattleGame
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
-            game.setCurrentPlayer(Game.PLAYER_TWO);
+            if(game.getCurrentPlayer() == Game.PLAYER_ONE)
+                game.setCurrentPlayer(Game.PLAYER_TWO);
+            else
+                game.setCurrentPlayer(Game.PLAYER_ONE);
             if (game.getCurrentPlayer() == Game.PLAYER_TWO)
             {
                 buttonNext.Enabled = false;
@@ -264,6 +472,8 @@ namespace SeaBattleGame
                 labelTwoCount.Text = countTwoShips.ToString();
                 labelThreeCount.Text = countThreeShips.ToString();
                 labelFourCount.Text = countFourShips.ToString();
+                labelStep.Text = "Ход игрока 2";
+                nullTextBox();
             }
             else if(game.getCurrentPlayer() == Game.PLAYER_ONE)
             {
@@ -276,7 +486,30 @@ namespace SeaBattleGame
                 panelSetShips.Visible = false;
                 dataGridViewPlayer.Enabled = true;
                 dataGridViewOpponent.Enabled = true;
+                labelStep.Text = "Ход игрока 1";
             }
         }
+
+        public void nullTextBox()
+        {
+            textBoxOneLetter.Text = "";
+            textBoxOneLetter2.Text = "";
+            textBoxTwoLetter.Text = "";
+            textBoxTwoLetter2.Text = "";
+            textBoxThreeLetter.Text = "";
+            textBoxThreeLetter2.Text = "";
+            textBoxFourLetter.Text = "";
+            textBoxFourLetter2.Text = "";
+            textBoxOneNum.Text = "";
+            textBoxOneNum2.Text = "";
+            textBoxTwoNum.Text = "";
+            textBoxTwoNum2.Text = "";
+            textBoxThreeNum.Text = "";
+            textBoxThreeNum2.Text = "";
+            textBoxFourNum.Text = "";
+            textBoxFourNum2.Text = "";
+        }
+
+
     }
 }
