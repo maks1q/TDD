@@ -121,12 +121,14 @@ namespace SeaBattleGame
                         game.setCurrentPlayer(Game.PLAYER_TWO);
                         drawPlayerField(playerTwoField);
                         drawOpponentField(playerOneField);
+                        labelStep.Text = "Ход игрока 2";
                     }
                     else if (game.getCurrentPlayer() == Game.PLAYER_TWO)
                     {
                         game.setCurrentPlayer(Game.PLAYER_ONE);
                         drawPlayerField(playerOneField);
                         drawOpponentField(playerTwoField);
+                        labelStep.Text = "Ход игрока 1";
                     }
                 }
                 else if (resultShot == Field.SHOT_KILLED)
