@@ -57,13 +57,14 @@ namespace SeaBattleGame
                 labelTwoCount.Text = countTwoShips.ToString();
                 labelThreeCount.Text = countThreeShips.ToString();
                 labelFourCount.Text = countFourShips.ToString();
-                dataGridViewPlayer.Enabled = true;
-                dataGridViewOpponent.Enabled = true;
-                //panelSetShips.Visible = true;
+                //dataGridViewPlayer.Enabled = true;
+                //dataGridViewOpponent.Enabled = true;
+                panelSetShips.Visible = true;
+                nullTextBox();
                 //currentField.setShip(2, 1, 1, 2, 1);
                 //currentField.setShip(2, 5, 1, 6, 1);
                 //ставим корабли 1 игрока
-                playerOneField.setShip(1, 0, 0, 0, 0);
+                /*playerOneField.setShip(1, 0, 0, 0, 0);
                 playerOneField.setShip(1, 2, 0, 2, 0);
                 playerOneField.setShip(1, 4, 0, 4, 0);
                 playerOneField.setShip(1, 6, 0, 6, 0);
@@ -84,7 +85,7 @@ namespace SeaBattleGame
                 playerTwoField.setShip(3, 2, 6, 2, 8);
                 playerTwoField.setShip(3, 4, 0, 4, 2);
                 playerTwoField.setShip(4, 4, 4, 4, 7);
-
+                */
                 drawPlayerField(playerOneField);
             }
         }
@@ -476,6 +477,7 @@ namespace SeaBattleGame
                 labelFourCount.Text = countFourShips.ToString();
                 labelStep.Text = "Ход игрока 2";
                 nullTextBox();
+                clearTables();
             }
             else if(game.getCurrentPlayer() == Game.PLAYER_ONE)
             {
